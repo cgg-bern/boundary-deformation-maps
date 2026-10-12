@@ -1,0 +1,357 @@
+{
+    "____section1____":"------------------------ general parameters",
+    "log_level":"important",
+    "timeout_time_h":24,
+    "penalty_mu": 1e2,
+    "constr_eps":1e-8,
+    "dup_glueing_w":0.0,
+    "holonomy_eps_rad":1e-4,
+    "tolerance_gdx":1e-3,
+    "convergence_eps":1e-3,
+    "target_ref_vol":-1,
+    "target_ref_len":-1,
+    "max_outer_iters":100,
+    "max_inner_iters":100,
+    "max_split_rounds":0,
+    "enable_one_by_one_boundary_pass": true,
+    "enable_tutte_init":true,
+    "one_by_one_init_Dirichlet_barrier_w":0,
+    "one_by_one_init_Dirichlet_barrier_thresh":1e10,
+    "enable_boundary_pass":true,
+    "enable_ref_pos_update_at_iteration0":true,
+    "force_interior_constraints":true,
+    "use_reference_mesh_as_reference":true,
+    "constrain_initial_ref_mesh_boundary":true,
+    "glueing_energy_w":1e0,
+    "var_ref_elements_w":0,
+    "preconditioner_range":1e15,
+    "max_infeasible_step_safety_factor":0.9,
+    "stop_if_progress_is_lower_than_thresh":true,
+    "stop_at_feasible_solution":true,
+    "stop_after_mesh_setup":false,
+    "stop_at_ref_mesh_remeshing":false,
+    "stop_at_init":false,
+    "constraint_progress_thresh":1e-3,
+    "alignment_thresh": 1e0,
+    "dihedral_angle_sum_eps":1e-1,
+    "enable_two_pass":true,
+    "enable_animation_export":false,
+    "enable_CDT_bbox":false,
+    "mesh_animation_frames_output_dir":"/Users/val/Desktop/blender-animation-frames/remeshing-opti/",
+    "solver_name":"truncated_newton_PCG",
+    "scaling_factor_type":"total_volume_ratio",
+    "enable_adapted_boundary_ref":true,
+    "enable_all_safety_checks":false,
+    "enable_remeshing_holonomy_checks":false,
+    
+    "enable_initial_elements_analysis":true,
+    "enable_post_ref_mesh_decimation_elements_analysis":true,
+    "enable_post_ref_mesh_pre_remeshing_elements_analysis":true,
+    "enable_hill_climbing_elements_analysis":false,
+    "enable_pre_focused_remeshing_elements_analysis":false,
+    "enable_final_elements_analysis":false,
+    "enable_relaxation_elements_analysis":false,
+    
+    "ref_opti_element_type":"IVL",
+    "base_element_type":"SDE",
+    
+    "enable_debugging_meshes_exportation":false,
+    "enable_vertex_trajectory_mesh":false,
+    "debugging_meshes_exportation_extension":".ovm",
+    
+    "min_ref_mesh_element_volume":1e-6,
+    "target_diff_threshold_deg":2.0,
+    
+    "pre_remeshing_steps":["hill_climbing", "decimation"],
+    
+    "enable_initial_mesh_decimation":true,
+    "decimation_mode":"phases",
+    "decimation_priority_criterion":"volume_length",
+    "decimation_max_iterations":100,
+    "decimation_enable_smoothing":true,
+    "decimation_enable_swaps":true,
+    "decimation_collapse_metric_thresh":1e-1,
+    "decimation_rel_volume_thresh":1e-6,
+    "decimation_quality_metric":"volume_length",
+    "decimation_collapse_relative_epsilon":1e-2,
+        
+    "enable_ref_mesh_pre_remeshing":true,
+    "pre_remeshing_mode":"phases",
+    "ref_mesh_pre_remeshing_phases":[2,1,0],
+    "ref_mesh_pre_remeshing_quality_metric":"volume_length",
+    "ref_mesh_pre_remeshing_max_iterations":10,
+    "ref_mesh_pre_remeshing_enable_pre_split_local_opti":true,
+    "ref_mesh_pre_remeshing_candidate_quality_threshold":1e-1,
+    "ref_mesh_pre_remeshing_target_quality_threshold":1e-1,
+    "ref_mesh_pre_remeshing_relative_volume_threshold":1e-6,
+    "ref_mesh_pre_remeshing_quality_relative_epsilon":1e-2,
+    "ref_mesh_pre_remeshing_enable_smoothing":true,
+    "ref_mesh_pre_remeshing_enable_boundary_splits":false,
+    "ref_mesh_pre_remeshing_enable_early_stop":true,
+    
+    "enable_initial_non_conforming_relaxation":true,
+    
+    "enable_focused_remeshing":false,
+    "enable_non_conforming_splits":false,
+    "enable_post_non_conforming_splits_opti":false,
+    "max_focused_remeshing_iters":20,
+    "max_non_glued_focused_remeshing_iters":1,
+    "focused_remeshing_mode_inner_iters":1000,
+    "non_glued_focused_remeshing_mode_inner_iters":2000,
+    "focused_remeshing_split_t_factor": 0.5,
+    "focused_remeshing_progress_thresh": 1e-4,
+    "stop_at_first_focused_remeshing_failure":false,
+    
+    "enable_post_focused_remeshing_relaxation":true,
+    "relaxation_pass_inner_iters":100000,
+    "relaxation_pass_barrier_w":0,
+    "relaxation_pass_IVL_w":1e0,
+    "relaxation_pass_distance_barrier_w":1e-4,
+    "relaxation_pass_distance_rel_margin":1e-2,
+    "relaxation_pass_distance_min_max_dist":0.0,
+    
+    
+    "enable_post_failure_hill_climbing_remeshing":false,
+    "enable_pre_queue_refill_hill_climbing_remeshing":false,
+    "hill_climbing_also_check_ref_mesh":true,
+    "hill_climbing_phases": [0,1],
+    "hill_climbing_quality_metric":"volume_length",
+    "hill_climbing_max_iterations":10,
+    "hill_climbing_enable_pre_split_local_opti":true,
+    "hill_climbing_split_angle_threshold_deg":170.0,
+    "hill_climbing_quality_relative_epsilon":1e-2,
+    "max_post_failure_remeshing_passes":10,
+    
+        
+    "enable_post_remeshing_ref_mesh_opti":true,
+    
+    "enable_anchor_vertices":false,
+    "enable_edge_glueing":true,
+    "enable_glueing_elements":true,
+    "enable_edge_length_barrier":true,
+    
+    "split_strategy":"targeted_remeshing_v1",
+    "blocking_criterion":"step_length",
+    "enable_edge_collapses":true,
+    "collapse_strategy":"spike_base",
+    "max_remeshing_iters_per_round":1,
+    "split_candidate_thresh":179,
+    "max_splits_per_iteration":-1,
+    "collapse_candidate_thresh":1.0,
+    "blocking_step_thresh":0.1,
+    
+    
+    "____section_hf_glueing____":"------------------------ Halfface glueing energy",
+    "hf_glueing_epsilon_deg":42423.0,
+    "hf_glueing_w":1e5,
+    "hf_glueing_barrier_w":1e-5,
+    "halfface_glueing_final_energy_relative_threshold":1e-2,
+
+    
+    "____section_SDE____":"------------------------ SDE energy",
+    "Dirichlet_w":1,
+    "Dirichlet_barrier_w":0.0,
+    "Dirichlet_barrier_min":1e2,
+    
+    
+    "____section_IVL____":"------------------------ IVL energy",
+    "IVL_w":0,
+    "IVL_barrier_w":1e0,
+    "IVL_barrier_min":1e4,
+    "barrier_min_scale_factor":1.1,
+    
+    
+    "____section3____":"------------------------ Foldover-Free energy",
+    "fof_conf_w":1e1,
+    "fof_vol_w":1e-4,
+    
+    
+    "____section4____":"------------------------ radius barrier",
+    "radius_barrier_mu": 1e0,
+    "radius_barrier_r":1e-5,
+    "radius_barrier_min_r":1e-8,
+    
+    
+    "____section5____":"------------------------ testing",
+    "enable_presplit":true,
+    "test_mesh":"untangling_cone_1582389.ovm",
+    "test_mesh_save2":"untangling_cone_1064115.ovm",
+    "test_mesh_save":"untangling_cone_117014.ovm",
+    "enable_interactive_mode":false,
+    
+    "____section6____":"------------------------ splitting",
+    "alpha_thresh": 179,
+    "propagate_split":false,
+    "split_mid_point_trials_count":1000,
+
+    "____section7____":"------------------------ others",
+    "e_thresh":1e9,
+    "only_use_dbl_chebyshev": true,
+    "stop_once_all_tets_are_good": false,
+    "chebyshev_smoothing_iterations": 100,
+    
+    "____section_wrapping____":"------------------------ wrapping",
+    
+    "wrap_mode":"global",
+    
+    "wrapping_distortion_element":"SDE",
+    "wrapping_max_root_wrap_inner_iters":10000,
+    "wrapping_max_inner_iters":1000,
+    "wrapping_enable_hf_wrapping_elements":false,
+    "wrapping_hf_wrapping_w":-1.0,
+    "wrapping_distortion_w":1e-2,
+    "wrapping_FOF_conf_w":1e0,
+    "wrapping_FOF_vol_w":1e-3,
+    "wrapping_IVL_w":1e-3,
+    "wrapping_IVL_slack_w":1e0,
+    "wrapping_IVL_bound":1e4,
+    "wrapping_constraints_activation_target_threshold_deg":89.0,
+    "wrapping_target_diff_threshold_deg":5.0,
+        
+    "wrapping_always_use_slack_variant":true,
+    "wrapping_disable_IVL_bound_for_wrap_incident_cells":true,
+    "wrapping_always_use_target_shape_as_ref":false,
+    "wrapping_enable_global_relaxation":false,
+    "wrapping_enable_local_relaxation":false,
+    
+    "wrapping_relaxation_IVL_w":1e-5,
+    "wrapping_virtual_elements_relaxation_w":1e4,
+    
+    "wrapping_enable_boundary_edge_elements":true,
+    "wrapping_boundary_edge_elements_w":1e3,
+    
+    "wrapping_enable_holonomy_virtual_elements":true,
+    "wrapping_virtual_elements_e_bound":-1.0,
+    "wrapping_focus_virtual_elements_w":1e3,
+    "wrapping_virtual_elements_w":1e3,
+    
+    "wrapping_enable_pre_root_wrap_mesh_opti":true,
+    "wrapping_pre_root_wrap_mesh_opti_iters":100000,
+    
+    "wrapping_remeshing_mode":"phases",
+    "wrapping_max_remeshing_outer_iters":100,
+    "wrapping_rel_progress_thresh":1e-3,
+    "wrapping_remeshing_enable_smoothing":true,
+    "wrapping_max_remeshing_inner_iters":2,
+    "wrapping_remeshing_quality_threshold":1e0,
+    "wrapping_min_max_t_rel_thresh":-1.0,
+    
+    "wrapping_enable_focused_remeshing":false,
+    "wrapping_focused_remeshing_split_thresh_deg":0.0,
+    "wrapping_focused_remeshing_split_t_factor":-1.0,
+    
+    "wrapping_enable_element_analysis":false,
+    "wrapping_enable_remeshing_element_analysis":true,
+    "wrapping_enable_final_element_analysis":true,
+    "wrapping_enable_dry_run":true,
+    
+    "enable_wrapping_problem_exportation":false,
+    
+    "____section_global_wrapping____":"------------------------ global wrapping ",
+
+    "global_wrapping_virtual_element":"AUG_SDE",
+    
+    "global_wrapping_root_hfh_idx_start":0,
+    "global_wrapping_root_hfh_ring_k":5,
+    
+    "global_wrapping_convergence_eps":1e-3,
+    "global_wrapping_max_outer_iters":10000,
+    "global_wrapping_max_inner_iters":40,
+    "global_wrapping_max_total_inner_iters":-1,
+    "global_wrapping_max_newton_iters":500,
+    "global_wrapping_tolerance_gdx":1e-3,
+    "global_wrapping_max_pcg_iters":1000,
+    "global_wrapping_constr_eps":1e-9,
+    "global_wrapping_constr_violation_progress_eps":1e-4,
+    "global_wrapping_energy_progress_eps":1e-3,
+    
+    "global_wrapping_max_abs_hessian_coeff_thresh":-1,
+    
+    "global_wrapping_enable_growing_front_equality_constraints":false,
+    "global_wrapping_growing_front_equality_constraints_dihedral_diff_thresh_deg":360.0,
+    
+    
+    "global_wrapping_virtual_energy_inner_progress_thresh":0.1,
+    "global_wrapping_virtual_energy_outer_progress_thresh":0.5,
+    "global_wrapping_max_angle_diff_snap_thresh":1.0,
+    "global_wrapping_virtual_energy_success_thresh":1e-3,
+    "global_wrapping_virtual_energy_start_w":1e0,
+    "global_wrapping_quality_energy_start_w":1e0,
+    "global_wrapping_virtual_energy_max_start_w":1e0,
+    "global_wrapping_virtual_energy_max_w":1e6,
+    "global_wrapping_virtual_energy_start_w_min_scaling":1e-5,
+    "global_wrapping_virtual_elements_w_variation":10.0,
+    "global_wrapping_enable_adaptive_start_w":true,
+    "global_wrapping_enable_relaxation_pass":false,
+    "global_wrapping_enable_fixed_boundary_relaxation_pass":false,
+    "global_wrapping_enable_backup_DA_energy_mode":false,
+    "global_wrapping_adaptive_start_w_target_g_norm":[1e2, 0, 0, 1e0],
+    
+    "global_wrapping_enable_forced_snapping":false,
+    "global_wrapping_stop_once_below_dihedral_angle_diff_threshold":false,
+    "global_wrapping_stop_at_virtual_energy_convergence":false,
+    "global_wrapping_enable_full_history":false,
+
+
+    "global_wrapping_IVL_w":1e0,
+    "global_wrapping_IVL_bound_w":1e-3,
+    "global_wrapping_IVL_bound":1e6,
+    "global_wrapping_IVL_bound_scaling":1.1,
+    "global_wrapping_IVL_vol_w":1e-3,
+    "global_wrapping_IVL_rel_vol_bound":1e-6,
+    "global_wrapping_IVL_vol_scaling":1.1,
+    
+    "global_wrapping_enable_edge_length_bound_elements_for_boundary":false,
+    "global_wrapping_edge_length_bound_elements_w":1e-3,
+    "global_wrapping_edge_length_bound_elements_boundary_rel_bound":1e-3,
+    "global_wrapping_edge_length_bound_elements_bound_scaling":0.9,
+    
+    "global_wrapping_virtual_DA_w":1e0,
+    "global_wrapping_virtual_DA_sqrt_w":1e-1,
+    "global_wrapping_virtual_DA_pow":4,
+    "global_wrapping_virtual_DA_bound_w":0,
+    "global_wrapping_virtual_DA_diff_bound_deg":0,
+
+    "global_wrapping_virtual_FOF_conf_w":1.0,
+    "global_wrapping_virtual_FOF_vol_w":1e-3,
+
+    "global_wrapping_virtual_SDE_w":1e0,
+    "global_wrapping_virtual_SDE_sqrt_reg_eps":1e-4,
+
+    "global_wrapping_virtual_IVL_w":1e0,
+
+    "global_wrapping_enable_focused_remeshing":true,
+    "global_wrapping_quick_remeshing_candidate_quality_threshold":1e0,
+    "global_wrapping_quick_remeshing_target_quality_threshold":1e-4,
+    "global_wrapping_enable_focused_remeshing_refill":true,
+    "global_wrapping_enable_focused_splitting":false,
+
+    "global_wrapping_deep_remeshing_inner_iters":5,
+    "global_wrapping_deep_remeshing_candidate_quality_threshold":1e0,
+    "global_wrapping_deep_remeshing_target_quality_threshold":1e-1,
+    "global_wrapping_deep_remeshing_enable_early_stop":true,
+        
+    "global_wrapping_enable_analysis":false,
+    
+    
+    "positional_wrapping_constraints_violation_threshold":1e-5,
+    "positional_wrapping_enable_snapping":false,
+    
+    "____section_global_smoothing____":"------------------------ global smoothing ",
+
+    "smoothing_convergence_eps":1e-3,
+    "smoothing_tolerance_gdx":1e-3,
+    "smoothing_constr_eps":1e-10,
+    "enable_smoothing_IVL_bounds":true,
+    
+
+    "____section_tests____":"------------------------ tests",
+
+    "test_target_x_angles":[0.0],
+    "test_target_y_angles":[180.0],
+    
+    "test_start_y_angles":[90.0],
+    
+    
+    "end of json":"just so you don't need to think about the comma when adding new lines at the end"
+}

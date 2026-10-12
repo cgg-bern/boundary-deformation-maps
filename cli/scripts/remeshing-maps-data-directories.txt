@@ -1,0 +1,8 @@
+[
+  {"dir": "/Users/val/Desktop/stars_from_hendriks_cuboids", "label": "Cuboid Stars"},
+  {"dir": "/Users/val/Desktop/10ktetovmmeshes", "label": "SAE Tets"},
+  {"dir": "/Users/val/Desktop/VOLMAP/star", "label": "VOLMAP Stars"},
+  {"dir": "/Users/val/Desktop/hendriks_cuboids", "label": "Motorcycle Cuboids"},
+  {"dir": "/Users/val/Desktop/knotted_hole_meshes", "label": "Knotted Holes"},
+  {"dir": "/Users/val/Desktop/surface-registration/meshes", "label": "Vertebrae"}
+]

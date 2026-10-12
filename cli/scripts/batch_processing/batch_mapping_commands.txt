@@ -1,0 +1,210 @@
+
+//---------------------- FOLDOVER-FREE
+
+//------- KH
+parallel --eta -j10 ./untangle3d ${kh_dir}/knotted_hole_{}_codomain_mesh.vtk ${kh_dir}/knotted_hole_{}_domain_mesh.vtk ${FOF_kh_results_dir}/knotted_hole_{}_FOF_codomain_mesh.vtk ${FOF_kh_results_dir}/knotted_hole_{}_FOF_stats.txt ::: {1..10}
+
+
+//------- KH - remeshing map output
+parallel --eta -j10 ./untangle3d ${kh_dir}/knotted_hole_{}_boundary_deformation_map_output_codomain.vtk ${kh_dir}/knotted_hole_{}_boundary_deformation_map_output_domain.vtk ${kh_dir}/knotted_hole_{}_boundary_deformation_map_output_FOF_codomain.vtk ${kh_dir}/knotted_hole_{}_boundary_deformation_map_output_FOF_stats.txt ::: {1..10}
+
+
+//------- stars
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); start=$(date +%s%N);  ./untangle3d {} $(dirname {})/star_domain_${i}.vtk $(dirname {})/star_${i}_FOF_codomain_mesh.vtk $(dirname {})/star_${i}_FOF_stats.txt; echo "$(( ($(date +%s%N) - start) ))ns" > $(dirname {})/star_${i}_FOF.time'
+
+
+//------- armadillo
+parallel --eta -j60 "start=$(date +%s%N); ./untangle3d ${arma_dir}/{}/init.vtk ${arma_dir}/{}/rest.vtk ${arma_dir}/{}/FOF_output.vtk ${arma_dir}/{}/FOF_stats.txt; echo "$(( ($(date +%s%N) - start) ))ns" > ${arma_dir}/{}/FOF.time" ::: {0..600..20}
+
+//------- spine
+parallel --eta -j125 'start=$(date +%s%N); ./untangle3d $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_target_volume.vtk ${spine_dir}/AIS-{1}/FSU-{2}_vol_mesh.vtk $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_FOF_output.vtk $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_FOF_stats.txt; echo "$(( ($(date +%s%N) - start) ))ns" > $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_FOF.time;' ::: {1..2} ::: {8..20} ::: {1..2} ::: {8..20}
+
+
+
+//------- VOLMAP
+find "${volmap_dir}"/G{1,3}/ -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; start=$(date +%s%N); ./untangle3d ${volmap_dir}/${group}_star/${name}_star.vtk {} ${volmap_dir}/${group}_star/${name}_star_FOF.vtk ${volmap_dir}/${group}_star/${name}_star_FOF_stats.txt; echo "$(( ($(date +%s%N) - start) ))ns" > ${volmap_dir}/${group}_star/${name}_star_FOF.time '
+
+//------- VOLMAP - cord pre-split
+find "${volmap_cord_split_dir}"/G{1,3}/ -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; start=$(date +%s%N); ./untangle3d ${volmap_cord_split_dir}/${group}_star/${name}_star.vtk {} ${volmap_cord_split_dir}/${group}_star/${name}_star_FOF.vtk ${volmap_cord_split_dir}/${group}_star/${name}_star_FOF_stats.txt; echo "$(( ($(date +%s%N) - start) ))ns" > ${volmap_cord_split_dir}/${group}_star/${name}_star_FOF.time '
+
+
+
+
+//---------------------- TOTAL LIFTED CONTENT
+
+
+//----- KH
+
+#create handles files
+parallel --eta -j101 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py $kh_dir/star_domain_${i}.vtk $(dirname {})/star_${i}_handles.txt ::: {1..10}
+
+
+parallel --eta -j10 ./findInjective $kh_dir/knotted_hole_{}_TLC_input ../default_solver_options $kh_dir/knotted_hole_{}_TLC_output ::: {1..10}
+
+#convert to vtk
+parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/I0/get_result_mesh.py $kh_dir/knotted_hole_{}_TLC_input $kh_dir/knotted_hole_{}_TLC_output $kh_dir/knotted_hole_{}_TLC_output.vtk ::: {1..10}
+
+#then to ovm
+parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py $kh_dir/knotted_hole_{}_TLC_output.vtk $kh_dir/knotted_hole_{}_TLC_output.ovm ::: {1..10}
+
+#then extract stats files
+parallel --eta -j10 ./cli/boundary_deformation_maps -tet --orientation-stats-filepath $kh_dir/knotted_hole_{}_TLC_stats.txt --mesh-name knotted_hole_{} --codomain-mesh $kh_dir/knotted_hole_{}_TLC_output.ovm ::: {1..10}
+
+
+//----- KH - remeshing map output
+
+#convert to vtk
+find $kh_dir/*boundary_deformation_map_output*.ovm | parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.vtk
+
+#create handles files
+parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py $kh_dir/knotted_hole_{}_boundary_deformation_map_output_domain.vtk $kh_dir/knotted_hole_{}_boundary_deformation_map_output_domain_handles.txt ::: {1..10}
+
+#generate TLC input files
+parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py $kh_dir/knotted_hole_{}_boundary_deformation_map_output_domain.vtk $kh_dir/knotted_hole_{}_boundary_deformation_map_output_codomain.vtk $kh_dir/knotted_hole_{}_boundary_deformation_map_output_domain_handles.txt $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_input ::: {1..10}
+
+#run TLC
+parallel --eta -j10 './findInjective /vol/valentin/root/knotted_hole_clean/knotted_hole_{}_boundary_deformation_map_output_TLC_input  ../default_solver_options /vol/valentin/root/knotted_hole_clean/knotted_hole_{}_boundary_deformation_map_output_TLC_output; echo "$(( ($(date +%s%N) - start) ))ns" > /vol/valentin/root/knotted_hole_clean/knotted_hole_{}_boundary_deformation_map_output_TLC.time' ::: {1..10}
+
+#convert back to vtk
+parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_input $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_output $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_codomain_mesh.vtk  ::: {1..10}
+
+# and back to ovm
+find $kh_dir/*_boundary_deformation_map_output_TLC_codomain_mesh.vtk | parallel --eta -j10 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.ovm
+
+#and extract stats files
+parallel --eta -j10 ./cli/boundary_deformation_maps -tet --orientation-stats-filepath $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_stats.txt --mesh-name knotted_hole_{}_boundary_deformation_map_output --codomain-mesh $kh_dir/knotted_hole_{}_boundary_deformation_map_output_TLC_codomain_mesh.ovm ::: {1..10}
+
+
+//----- stars
+#create handles files
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py $(dirname {})/star_domain_${i}.vtk $(dirname {})/star_${i}_handles.txt'
+
+#generate TLC input files
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py $(dirname {})/star_domain_${i}.vtk {} $(dirname {})/star_${i}_handles.txt $(dirname {})/star_${i}_TLC_input'
+
+#run TLC
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); start=$(date +%s%N); ./findInjective $(dirname {})/star_${i}_TLC_input ../default_solver_options $(dirname {})/star_${i}_TLC_output; echo "$(( ($(date +%s%N) - start) ))ns" > $(dirname {})/star_${i}_TLC.time'
+
+#convert back to vtk
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py $(dirname {})/star_${i}_TLC_input $(dirname {})/star_${i}_TLC_output $(dirname {})/star_${i}_TLC_codomain_mesh.vtk'
+
+#and back to ovm
+find ${hc_dir} -name "star_*TLC_codomain_mesh.vtk" | parallel --eta -j100 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.ovm
+
+#and extract stats files
+find ${hc_dir} -name "star_codomain_*.vtk" | parallel --eta -j100 'i=$(basename {} | grep -oP "\d+(?=\.vtk)"); ./cli/boundary_deformation_maps -tet --orientation-stats-filepath $(dirname {})/star_${i}_TLC_stats.txt --mesh-name $(dirname {})/star_${i} --codomain-mesh $(dirname {})/star_${i}_TLC_codomain_mesh.ovm'
+
+
+//------ armadillo
+
+
+#generate TLC input files
+parallel --eta -j60 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py $arma_dir/{}/rest.vtk $arma_dir/{}/init.vtk $arma_dir/{}/handles.txt $arma_dir/{}/TLC_input ::: {0..600..20}
+
+#run TLC
+parallel --eta -j60 "start=$(date +%s%N); ./findInjective $arma_dir/{}/TLC_input  ../default_solver_options $arma_dir/{}/TLC_output; echo "$(( ($(date +%s%N) - start) ))ns" > ${arma_dir}/{}/TLC.time" ::: {0..600..20}
+
+#convert back to vtk
+parallel --eta -j60 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py $arma_dir/{}/TLC_input $arma_dir/{}/TLC_output.vtk ::: {0..600..20}
+
+# and back to ovm
+parallel --eta -j60 python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py $arma_dir/{}/TLC_output.vtk $arma_dir/{}/TLC_output.ovm ::: {0..600..20}
+
+#and extract stats files
+parallel --eta -j60 ./cli/boundary_deformation_maps -tet --orientation-stats-filepath $arma_dir/{}/TLC_stats.txt --mesh-name armadillo_{} --codomain-mesh $arma_dir/{}/TLC_output.ovm ::: {0..600..20}
+
+
+//------ VOLMAP
+
+#create handles files
+find ${volmap_dir}/G1 -name "*.vtk" | parallel --eta -j100 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py {} {.}_handles.txt'
+
+#generate TLC input files
+find ${volmap_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py {} ${volmap_dir}/${group}_star/${name}_star.vtk {.}_handles.txt ${volmap_dir}/${group}_star/${name}_star_TLC_input'
+
+#run TLC
+find ${volmap_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; start=$(date +%s%N); ./findInjective ${volmap_dir}/${group}_star/${name}_star_TLC_input ../default_solver_options ${volmap_dir}/${group}_star/${name}_star_TLC_output;  echo "$(( ($(date +%s%N) - start) ))ns" > ${volmap_dir}/${group}_star/${name}_star_TLC.time'
+
+#convert back to vtk
+find ${volmap_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py  ${volmap_dir}/${group}_star/${name}_star_TLC_input  ${volmap_dir}/${group}_star/${name}_star_TLC_output ${volmap_dir}/${group}_star/${name}_star_TLC_codomain_mesh.vtk'
+
+#and back to ovm
+find ${volmap_dir}/G1_star -name "*star_TLC_codomain_mesh.vtk" | parallel --eta -j100 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.ovm'
+
+#and extract stats files
+find ${volmap_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.};  ./cli/boundary_deformation_maps -tet --orientation-stats-filepath ${volmap_dir}/${group}_star/${name}_star_TLC_stats.txt --mesh-name temp --codomain-mesh ${volmap_dir}/${group}_star/${name}_star_TLC_codomain_mesh.ovm'
+
+
+
+//------ VOLMAP - cord pre-split
+
+#generate meshes
+find ${volmap_dir}/G1 -name "*.ovm" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; ./cli/boundary_deformation_maps -tet -v2 --invert-input --domain-mesh {} --boundary-txt ${volmap_dir}/${group}_star/${name}_star.txt --remeshed-domain-mesh-filepath ${volmap_cord_split_dir}/${group}_star/${name}_cord_split.ovm --remeshed-boundary-conditions-filepath ${volmap_cord_split_dir}/${group}_star/${name}_cord_split_star.txt'
+#MAKE SURE TO MOVE THE PRE-SPLIT OUTPUT TO THE DEDICATED DIRECTORY
+
+
+#create handles files
+find ${volmap_cord_split_dir}/G1 -name "*.vtk" | parallel --eta -j100 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py {} {.}_handles.txt'
+
+#generate TLC input files
+find ${volmap_cord_split_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py {} ${volmap_cord_split_dir}/${group}_star/${name}_star.vtk {.}_handles.txt ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_input'
+
+#run TLC
+find ${volmap_cord_split_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; start=$(date +%s%N); ./findInjective ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_input ../default_solver_options ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_output;  echo "$(( ($(date +%s%N) - start) ))ns" > ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC.time'
+
+#convert back to vtk
+find ${volmap_cord_split_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.}; python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py  ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_input  ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_output ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_codomain_mesh.vtk'
+
+#and back to ovm
+find ${volmap_cord_split_dir}/G1_star -name "*star_TLC_codomain_mesh.vtk" | parallel --eta -j100 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.ovm'
+
+#and extract stats files
+find ${volmap_cord_split_dir}/G1 -name "*.vtk" | parallel --eta -j100 'group=$(basename $(dirname {})); name={/.};  ./cli/boundary_deformation_maps -tet --orientation-stats-filepath ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_stats.txt --mesh-name temp --codomain-mesh ${volmap_cord_split_dir}/${group}_star/${name}_star_TLC_codomain_mesh.ovm'
+
+
+
+
+
+//------ Spine
+
+#create handles files
+
+parallel --eta -j125 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/extract_boundary_vert.py $spine_dir/AIS-{1}/FSU-{2}_vol_mesh.vtk $spine_dir/AIS-{1}/FSU-{2}_vol_mesh_handles.txt' ::: {1..2} ::: {8..20}
+
+#generate TLC input files
+parallel --eta -j125 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/convert_input_3D.py $spine_dir/AIS-{1}/FSU-{2}_vol_mesh.vtk $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_target_volume.vtk  $spine_dir/AIS-{1}/FSU-{2}_vol_mesh_handles.txt $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_input' ::: {1..2} ::: {8..20} ::: {1..2} ::: {8..20}
+
+#run TLC
+parallel --eta -j125 'start=$(date +%s%N); ./findInjective \
+$spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_input \
+../default_solver_options \
+$spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_output;  \
+echo "$(( ($(date +%s%N) - start) ))ns" >  $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC.time' ::: {1..2} ::: {8..20} ::: {1..2} ::: {8..20}
+
+
+#convert back to vtk
+parallel --eta -j125 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/get_result_mesh.py \
+$spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_input' \
+$spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_output' \
+$spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_codomain_mesh.vtk' \
+::: {1..2} ::: {8..20} ::: {1..2} ::: {8..20}
+
+
+#and back to ovm
+find ${spine_dir}/AIS-*/ -name "*TLC_codomain_mesh.vtk" | parallel --eta -j100 'python3 /vol/valentin/root/lifting_simplices_to_find_injectivity/IO/meshio_standalone.py {} {.}.ovm'
+
+#and extract stats files
+parallel --eta -j125 './cli/boundary_deformation_maps -tet \
+--orientation-stats-filepath $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_stats.txt \
+--mesh-name temp \
+--codomain-mesh $spine_dir/AIS-{3}/AIS-{1}_FSU-{2}_to_AIS-{3}_FSU-{4}_TLC_codomain_mesh.ovm' \
+::: {1..2} ::: {8..20} ::: {1..2} ::: {8..20}
+
+
+
+
+
+//--------------------------- KH GEN
+parallel --eta -j10 time ./cli/boundary_deformation_maps -v2 -tet --domain-mesh $kh_dir/knotted_hole_{}_domain_mesh.ovm --boundary-txt $kh_dir/knotted_hole_{}_boundary_conditions.txt --mesh-name knotted_hole_{} --json-stats-filepath $kh_dir/knotted_hole_{}_boundary_deformation_map_output.json --output-domain-mesh-filepath $kh_dir/knotted_hole_{}_boundary_deformation_map_output_domain.ovm --output-codomain-mesh-filepath $kh_dir/knotted_hole_{}_boundary_deformation_map_output_codomain.ovm ::: {1..10}
+
+

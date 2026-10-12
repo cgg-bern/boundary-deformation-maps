@@ -1,0 +1,7 @@
+[
+  {"dir": "/Users/val/Desktop/ovmMeshes/hendriks_cuboids", "label": "Motorcycle Cuboids"},
+  {"dir": "/Users/val/Desktop/ovmMeshes/stars_from_hendriks_cuboids", "label": "Cuboid Stars"},
+  {"dir": "/Users/val/Desktop/ovmMeshes/10ktetovmmeshes", "label": "SAE Tets"},
+  {"dir": "/Users/val/Desktop/ovmMeshes/knotted_hole_meshes", "label": "Knotted Holes"},
+  {"dir": "/Users/val/Desktop/ovmMeshes/VOLMAP/star", "label": "VOLMAP Stars"}
+]

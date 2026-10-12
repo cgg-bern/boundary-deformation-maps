@@ -1,0 +1,9 @@
+*build*
+*.DS_Store
+external*
+.idea*
+*/.venv
+.nfs*
+.ninja*
+.qt*
+
